@@ -1,35 +1,40 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
+import { DappProvider } from "@multiversx/sdk-dapp/wrappers";
+import { EnvironmentsEnum } from "@multiversx/sdk-dapp/types";
+import { Unlock } from "./pages/Unlock";
+import { HomePage } from "./pages/Home";
+import { Dashboard } from "./pages/Dashboard";
+import { Nav } from "./components/Nav.tsx";
+import { TransactionsToastList } from "@multiversx/sdk-dapp/UI/TransactionsToastList/TransactionsToastList";
+import {
+    NotificationModal,
+    SignTransactionsModals,
+} from "@multiversx/sdk-dapp/UI";
+import "./App.css";
 
 function App() {
-  const [count, setCount] = useState(0)
-
-  return (
-    <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    return (
+        <DappProvider
+            environment={EnvironmentsEnum.devnet}
+            customNetworkConfig={{
+                name: "[dappName]Config",
+                walletConnectV2ProjectId: "cb7cc48669086dde6d5c3358f8d95253",
+            }}
+            dappConfig={{logoutRoute: "/unlock"}}
+        >
+            <Router>
+                <Nav />
+                <TransactionsToastList />
+                <NotificationModal />
+                <SignTransactionsModals />
+                <Routes>
+                    <Route path="/" element={<HomePage />} />
+                    <Route path="/unlock" element={<Unlock />} />
+                    <Route path="/dashboard" element={<Dashboard />} />
+                </Routes>
+            </Router>
+        </DappProvider>
+    );
 }
 
-export default App
+export default App;
